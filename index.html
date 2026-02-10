@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saling Maaf - Sambut Ramadan dengan Hati Bersih</title>
+    <title>ShareMaaf - Sambut Ramadan dengan Hati Bersih</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -28,8 +28,10 @@
 </head>
 <body class="bg-krem text-sage-900 font-sans antialiased">
 
-    <nav class="fixed w-full z-50 bg-krem/90 backdrop-blur-md border-b border-sage-100 shadow-sm">
+    <!-- NAVIGASI -->
+    <nav class="fixed w-full z-50 bg-[#F9F7F2]/90 backdrop-blur-md border-b border-sage-100 shadow-sm">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
             <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.reload()">
                 <div class="w-10 h-10 bg-sage-800 rounded-xl flex items-center justify-center text-gold-400 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -37,31 +39,34 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="font-serif text-xl font-bold text-sage-900 leading-none">SalingMaaf</h1>
+                    <h1 class="font-serif text-xl font-bold text-sage-900 leading-none">ShareMaaf</h1>
                     <span class="text-[10px] tracking-widest uppercase text-sage-500 font-semibold">Edisi Ramadan</span>
                 </div>
             </div>
 
+            <!-- Tombol Navigasi -->
             <div>
-                <button onclick="window.location.href='login.html'" class="bg-sage-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-sage-700 transition-all shadow-lg hover:shadow-sage-900/30">
+                <button id="navBtn" onclick="window.location.href='login.html'" class="bg-sage-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-sage-700 transition-all shadow-lg hover:shadow-sage-900/30">
                     Mulai Sekarang
                 </button>
             </div>
         </div>
     </nav>
 
+    <!-- HERO SECTION -->
     <header class="pt-32 pb-20 px-6 min-h-[90vh] flex flex-col justify-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
         <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             
-            <div class="space-y-8 text-center md:text-left">
+            <!-- Teks Hero -->
+            <div class="space-y-8 text-center md:text-left animate-fade-in-up">
                 <div class="inline-flex items-center gap-2 bg-white border border-sage-200 px-4 py-2 rounded-full shadow-sm">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                     <span class="text-xs font-bold tracking-wide text-sage-600 uppercase">Menyambut 1448 H / 2026 M</span>
                 </div>
                 
                 <h1 class="font-serif text-5xl md:text-7xl leading-tight font-bold text-sage-900">
-                    Saling Maaf <br>
-                    Sebelum <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-500 to-amber-600 italic">Ramadan.</span>
+                    Share Maaf <br>
+                    Sebelum <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-500 to-yellow-600 italic">Ramadan.</span>
                 </h1>
                 
                 <p class="text-lg text-gray-600 leading-relaxed max-w-lg mx-auto md:mx-0">
@@ -69,16 +74,18 @@
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-2">
-                    <button onclick="window.location.href='login.html'" class="bg-sage-900 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
+                    <button id="ctaBtn" onclick="window.location.href='login.html'" class="bg-sage-900 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
                         <span>Buat Halaman Gratis</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </button>
+                    <!-- Link Contoh -->
                     <a href="#" class="px-8 py-4 rounded-xl font-semibold text-sage-800 border border-sage-300 hover:bg-white hover:border-sage-500 transition-all flex items-center justify-center">
                         Lihat Contoh Kartu
                     </a>
                 </div>
             </div>
 
+            <!-- Ilustrasi HP -->
             <div class="relative group flex justify-center">
                 <div class="absolute inset-0 bg-gradient-to-tr from-gold-400/20 to-sage-500/20 rounded-full blur-3xl opacity-50"></div>
                 <div class="relative bg-white border-4 border-sage-100 rounded-[2.5rem] shadow-2xl overflow-hidden w-[300px] h-[600px] rotate-3 hover:rotate-0 transition duration-700 ease-out">
@@ -96,10 +103,11 @@
         </div>
     </header>
 
+    <!-- SECTION FITUR -->
     <section class="py-24 bg-white">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-16">
-                <span class="text-gold-500 font-serif italic text-xl">Kenapa SalingMaaf?</span>
+                <span class="text-gold-500 font-serif italic text-xl">Kenapa ShareMaaf?</span>
                 <h2 class="font-serif text-4xl font-bold text-sage-900 mt-2">Fitur Spesial Ramadan</h2>
             </div>
 
@@ -123,6 +131,7 @@
         </div>
     </section>
 
+    <!-- CTA SECTION -->
     <section class="py-24 bg-sage-900 text-white relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
         
@@ -143,12 +152,54 @@
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="bg-sage-950 text-sage-300 py-10 text-center border-t border-sage-800">
         <p class="text-sm font-sans">
-            &copy; 2026 <b>SalingMaaf</b>. Marhaban Ya Ramadan 1448 H. <br>
+            &copy; 2026 <b>ShareMaaf</b>. Marhaban Ya Ramadan 1448 H. <br>
             Dibuat di Baleendah, Jawa Barat.
         </p>
     </footer>
 
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // --- TEMPAT CONFIG FIREBASE ANDA (PASTE DI BAWAH INI) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCKRq7PIArOYmQfJvWi3dD7TRCCZgvUH4s",
+            authDomain: "sharemaaf.firebaseapp.com",
+            projectId: "sharemaaf",
+            storageBucket: "sharemaaf.firebasestorage.app",
+            messagingSenderId: "797790329328",
+            appId: "1:797790329328:web:17b3704be32155aace6535"
+        };
+        // --------------------------------------------------------
+
+        // Inisialisasi Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        // Cek apakah user sudah login
+        firebase.auth().onAuthStateChanged((user) => {
+            const navBtn = document.getElementById('navBtn');
+            const ctaBtn = document.getElementById('ctaBtn');
+            
+            if (user) {
+                // Jika sudah login, tombol berubah fungsi ke Dashboard
+                if(navBtn) {
+                    navBtn.innerText = "DASHBOARD";
+                    navBtn.onclick = () => window.location.href = 'dashboard.html';
+                }
+                if(ctaBtn) {
+                    ctaBtn.innerHTML = `<span>Buka Dashboard</span>`;
+                    ctaBtn.onclick = () => window.location.href = 'dashboard.html';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
+
+
