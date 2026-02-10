@@ -20,82 +20,75 @@
             }
         }
     </script>
-    <style>
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
 </head>
 <body class="bg-white text-sage-900 h-screen flex overflow-hidden">
 
-    <!-- BAGIAN KIRI (HIASAN) -->
+    <!-- BAGIAN KIRI -->
     <div class="hidden md:flex md:w-1/2 bg-sage-900 relative justify-center items-center p-12 overflow-hidden">
         <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
         <div class="relative z-10 text-center space-y-6 max-w-md">
             <div class="w-16 h-16 bg-sage-800 rounded-2xl mx-auto flex items-center justify-center text-gold-400 text-3xl shadow-lg mb-6">🌙</div>
-            <h2 class="font-serif text-4xl text-white font-bold leading-tight uppercase tracking-tighter">ShareMaaf</h2>
-            <p class="text-sage-300 font-light text-lg">"Bersihkan hati, sambut Ramadan dengan penuh kemuliaan."</p>
+            <h2 class="font-serif text-4xl text-white font-bold leading-tight uppercase tracking-widest">ShareMaaf</h2>
+            <p class="text-sage-300 font-light text-lg italic">"Langkah awal silaturahmi dimulai dari hati yang memaafkan."</p>
         </div>
     </div>
 
-    <!-- BAGIAN KANAN (FORM) -->
+    <!-- BAGIAN KANAN -->
     <div class="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-20 bg-krem relative overflow-y-auto">
         <a href="index.html" class="absolute top-8 left-8 text-sage-500 hover:text-sage-900 flex items-center gap-2 text-sm font-semibold transition-colors">
             ← Beranda
         </a>
 
-        <div class="max-w-sm mx-auto w-full space-y-8 py-20 md:py-0">
+        <div class="max-w-sm mx-auto w-full space-y-8 py-10">
             <div class="text-center md:text-left">
                 <h1 class="font-serif text-3xl font-bold text-sage-900" id="authTitle">Selamat Datang</h1>
-                <p id="authSub" class="text-gray-500 mt-2 text-sm">Masuk untuk mengelola ucapan Anda.</p>
+                <p id="authSub" class="text-gray-500 mt-2 text-sm">Masuk untuk mengelola kartu ucapan Anda.</p>
             </div>
 
-            <!-- TABS PEMISAH LOGIN/DAFTAR -->
             <div id="authTabs" class="flex border-b border-sage-200">
                 <button onclick="switchTab('login')" id="tabLogin" class="flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900 transition-all">Masuk</button>
-                <button onclick="switchTab('daftar')" id="tabDaftar" class="flex-1 pb-3 border-b-2 border-transparent text-gray-400 font-medium transition-all">Daftar Baru</button>
+                <button onclick="switchTab('daftar')" id="tabDaftar" class="flex-1 pb-3 border-b-2 border-transparent text-gray-400 font-medium transition-all">Daftar</button>
             </div>
 
             <div class="space-y-4">
-                <!-- Field Nama (Hanya muncul saat daftar) -->
-                <div id="groupNama" class="hidden fade-in">
+                <div id="groupNama" class="hidden">
                     <label class="text-[10px] font-bold text-sage-500 uppercase tracking-widest ml-1">Nama Lengkap</label>
-                    <input type="text" id="regNama" class="w-full p-4 mt-1 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-sage-500" placeholder="Acep Saepudin">
+                    <input type="text" id="regNama" class="w-full p-4 mt-1 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-sage-500" placeholder="Contoh: Acep Saepudin">
                 </div>
 
-                <div class="fade-in">
-                    <label class="text-[10px] font-bold text-sage-500 uppercase tracking-widest ml-1">Alamat Email</label>
+                <div>
+                    <label class="text-[10px] font-bold text-sage-500 uppercase tracking-widest ml-1">Email</label>
                     <input type="email" id="email" class="w-full p-4 mt-1 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-sage-500" placeholder="email@contoh.com">
                 </div>
 
-                <div id="groupPass" class="fade-in">
+                <div id="groupPass">
                     <div class="flex justify-between items-center ml-1">
                         <label class="text-[10px] font-bold text-sage-500 uppercase tracking-widest">Password</label>
-                        <button onclick="switchTab('reset')" id="linkLupa" class="text-[10px] font-bold text-gold-500 hover:underline">Lupa Password?</button>
+                        <button onclick="switchTab('reset')" id="linkReset" class="text-[10px] font-bold text-gold-500 hover:underline">Lupa Password?</button>
                     </div>
-                    <input type="password" id="password" class="w-full p-4 mt-1 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-sage-500" placeholder="Minimal 6 karakter">
+                    <input type="password" id="password" class="w-full p-4 mt-1 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-sage-500" placeholder="Min. 6 Karakter">
                 </div>
 
                 <button onclick="processAuth()" id="btnAuth" class="w-full py-4 bg-sage-900 text-white rounded-2xl font-bold shadow-lg hover:bg-sage-800 transition-all active:scale-95">
                     MASUK SEKARANG
                 </button>
 
-                <div id="boxBatalReset" class="hidden text-center">
-                    <button onclick="switchTab('login')" class="text-xs text-sage-500 hover:text-sage-900 font-medium underline">Batal dan Kembali Masuk</button>
+                <div id="boxBatal" class="hidden text-center">
+                    <button onclick="switchTab('login')" class="text-xs text-sage-500 hover:text-sage-900 font-medium underline">Kembali ke Login</button>
                 </div>
             </div>
             
-            <p id="errorMsg" class="text-center text-xs text-red-500 font-medium p-3 bg-red-50 rounded-xl hidden"></p>
-            <p id="successMsg" class="text-center text-xs text-green-600 font-medium p-3 bg-green-50 rounded-xl hidden"></p>
+            <p id="msgError" class="text-center text-xs text-red-500 font-medium p-4 bg-red-50 rounded-2xl border border-red-100 hidden"></p>
+            <p id="msgSuccess" class="text-center text-xs text-green-600 font-medium p-4 bg-green-50 rounded-2xl border border-green-100 hidden"></p>
         </div>
     </div>
 
-    <!-- FIREBASE SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // CONFIG FIREBASE SHAREMAAF
+        // CONFIG HARUS BERSIH TANPA SPASI TAMBAHAN
         const firebaseConfig = {
             apiKey: "AIzaSyCKRq7PIArOYmQfJvWi3dD7TRCCzgvUH4s",
             authDomain: "sharemaaf.firebaseapp.com",
@@ -113,101 +106,73 @@
 
         function switchTab(mode) {
             currentMode = mode;
-            const tabLogin = document.getElementById('tabLogin');
-            const tabDaftar = document.getElementById('tabDaftar');
-            const groupNama = document.getElementById('groupNama');
-            const groupPass = document.getElementById('groupPass');
-            const authTabs = document.getElementById('authTabs');
-            const boxBatal = document.getElementById('boxBatalReset');
-            const btn = document.getElementById('btnAuth');
-            const title = document.getElementById('authTitle');
-            const sub = document.getElementById('authSub');
+            document.getElementById('msgError').classList.add('hidden');
+            document.getElementById('msgSuccess').classList.add('hidden');
+            
+            const isLogin = mode === 'login';
+            const isReset = mode === 'reset';
 
-            // Reset Messages
-            document.getElementById('errorMsg').classList.add('hidden');
-            document.getElementById('successMsg').classList.add('hidden');
+            document.getElementById('authTabs').style.display = isReset ? 'none' : 'flex';
+            document.getElementById('groupNama').style.display = (mode === 'daftar') ? 'block' : 'none';
+            document.getElementById('groupPass').style.display = isReset ? 'none' : 'block';
+            document.getElementById('boxBatal').style.display = isReset ? 'block' : 'none';
 
-            if (mode === 'login') {
-                tabLogin.className = 'flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900 transition-all';
-                tabDaftar.className = 'flex-1 pb-3 border-b-2 border-transparent text-gray-400 font-medium transition-all';
-                groupNama.style.display = 'none';
-                groupPass.style.display = 'block';
-                authTabs.style.display = 'flex';
-                boxBatal.style.display = 'none';
-                title.innerText = 'Selamat Datang';
-                sub.innerText = 'Masuk untuk mengelola ucapan Anda.';
-                btn.innerText = 'MASUK SEKARANG';
-            } else if (mode === 'daftar') {
-                tabLogin.className = 'flex-1 pb-3 border-b-2 border-transparent text-gray-400 font-medium transition-all';
-                tabDaftar.className = 'flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900 transition-all';
-                groupNama.style.display = 'block';
-                groupPass.style.display = 'block';
-                authTabs.style.display = 'flex';
-                boxBatal.style.display = 'none';
-                title.innerText = 'Buat Akun';
-                sub.innerText = 'Daftar untuk mulai berbagi kebaikan.';
-                btn.innerText = 'DAFTAR AKUN BARU';
-            } else if (mode === 'reset') {
-                groupNama.style.display = 'none';
-                groupPass.style.display = 'none';
-                authTabs.style.display = 'none';
-                boxBatal.style.display = 'block';
-                title.innerText = 'Lupa Password?';
-                sub.innerText = 'Masukkan email Anda untuk menerima link reset.';
-                btn.innerText = 'KIRIM LINK RESET';
+            if(isReset) {
+                document.getElementById('authTitle').innerText = "Atur Ulang Sandi";
+                document.getElementById('authSub').innerText = "Masukkan email untuk menerima tautan reset.";
+                document.getElementById('btnAuth').innerText = "KIRIM EMAIL RESET";
+            } else {
+                document.getElementById('tabLogin').className = isLogin ? 'flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900' : 'flex-1 pb-3 border-b-2 border-transparent text-gray-400';
+                document.getElementById('tabDaftar').className = !isLogin ? 'flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900' : 'flex-1 pb-3 border-b-2 border-transparent text-gray-400';
+                document.getElementById('authTitle').innerText = isLogin ? "Selamat Datang" : "Buat Akun Baru";
+                document.getElementById('btnAuth').innerText = isLogin ? "MASUK SEKARANG" : "DAFTAR SEKARANG";
             }
         }
 
         async function processAuth() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('password').value;
-            const nama = document.getElementById('regNama').value;
+            const nama = document.getElementById('regNama').value.trim();
             const btn = document.getElementById('btnAuth');
-            const err = document.getElementById('errorMsg');
-            const success = document.getElementById('successMsg');
+            const err = document.getElementById('msgError');
+            const success = document.getElementById('msgSuccess');
 
-            if(!email) return alert("Email harus diisi.");
+            if(!email) return alert("Email wajib diisi.");
             
-            btn.disabled = true; 
-            const originalText = btn.innerText;
+            btn.disabled = true;
             btn.innerText = "Memproses...";
             err.classList.add('hidden');
             success.classList.add('hidden');
 
             try {
-                if (currentMode === 'login') {
-                    if(!pass) throw new Error("Password harus diisi.");
+                if (currentMode === 'reset') {
+                    await auth.sendPasswordResetEmail(email);
+                    success.innerText = "Email reset password telah dikirim! Cek inbox atau folder spam Anda.";
+                    success.classList.remove('hidden');
+                } else if (currentMode === 'login') {
                     await auth.signInWithEmailAndPassword(email, pass);
                     window.location.href = 'dashboard.html';
-                } else if (currentMode === 'daftar') {
-                    if(!pass || !nama) throw new Error("Nama dan Password harus diisi.");
+                } else {
+                    if(!nama) throw new Error("Nama wajib diisi.");
                     const res = await auth.createUserWithEmailAndPassword(email, pass);
-                    
+                    await res.user.updateProfile({ displayName: nama });
                     await db.collection("users").doc(res.user.uid).set({
                         nama: nama,
                         email: email,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-
-                    await res.user.updateProfile({ displayName: nama });
                     window.location.href = 'dashboard.html';
-                } else if (currentMode === 'reset') {
-                    // FITUR LUPA PASSWORD
-                    await auth.sendPasswordResetEmail(email);
-                    success.innerText = "Link reset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam.";
-                    success.classList.remove('hidden');
-                    btn.disabled = false;
-                    btn.innerText = originalText;
                 }
             } catch (e) {
-                err.innerText = "Gagal: " + e.message;
+                err.innerText = "Pesan: " + e.message;
                 err.classList.remove('hidden');
+            } finally {
                 btn.disabled = false;
-                btn.innerText = originalText;
+                btn.innerText = currentMode === 'reset' ? "KIRIM EMAIL RESET" : (currentMode === 'login' ? "MASUK SEKARANG" : "DAFTAR SEKARANG");
             }
         }
 
-        auth.onAuthStateChanged(u => { if(u && currentMode !== 'reset') window.location.href='dashboard.html'; });
+        auth.onAuthStateChanged(user => { if(user && currentMode !== 'reset') window.location.href = 'dashboard.html'; });
     </script>
 </body>
 </html>
