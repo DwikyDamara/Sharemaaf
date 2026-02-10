@@ -23,7 +23,6 @@
 </head>
 <body class="bg-white text-sage-900 h-screen flex overflow-hidden">
 
-    <!-- BAGIAN KIRI -->
     <div class="hidden md:flex md:w-1/2 bg-sage-900 relative justify-center items-center p-12 overflow-hidden">
         <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
         <div class="relative z-10 text-center space-y-6 max-w-md">
@@ -33,7 +32,6 @@
         </div>
     </div>
 
-    <!-- BAGIAN KANAN -->
     <div class="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-20 bg-krem relative overflow-y-auto">
         <a href="index.html" class="absolute top-8 left-8 text-sage-500 hover:text-sage-900 flex items-center gap-2 text-sm font-semibold transition-colors">
             ← Beranda
@@ -88,7 +86,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // CONFIG HARUS BERSIH TANPA SPASI TAMBAHAN
         const firebaseConfig = {
             apiKey: "AIzaSyCKRq7PIArOYmQfJvWi3dD7TRCCZgvUH4s",
             authDomain: "sharemaaf.firebaseapp.com",
@@ -122,8 +119,8 @@
                 document.getElementById('authSub').innerText = "Masukkan email untuk menerima tautan reset.";
                 document.getElementById('btnAuth').innerText = "KIRIM EMAIL RESET";
             } else {
-                document.getElementById('tabLogin').className = isLogin ? 'flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900' : 'flex-1 pb-3 border-b-2 border-transparent text-gray-400';
-                document.getElementById('tabDaftar').className = !isLogin ? 'flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900' : 'flex-1 pb-3 border-b-2 border-transparent text-gray-400';
+                document.getElementById('tabLogin').className = isLogin ? 'flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900 transition-all' : 'flex-1 pb-3 border-b-2 border-transparent text-gray-400 font-medium transition-all';
+                document.getElementById('tabDaftar').className = !isLogin ? 'flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900 transition-all' : 'flex-1 pb-3 border-b-2 border-transparent text-gray-400 font-medium transition-all';
                 document.getElementById('authTitle').innerText = isLogin ? "Selamat Datang" : "Buat Akun Baru";
                 document.getElementById('btnAuth').innerText = isLogin ? "MASUK SEKARANG" : "DAFTAR SEKARANG";
             }
@@ -137,12 +134,41 @@
             const err = document.getElementById('msgError');
             const success = document.getElementById('msgSuccess');
 
-            if(!email) return alert("Email wajib diisi.");
+            // Reset Peringatan
+            err.classList.add('hidden');
+            success.classList.add('hidden');
+
+            // 1. Validasi Input Kosong
+            if (!email) {
+                err.innerText = "Email tidak boleh kosong.";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            // 2. Validasi Format Email
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                err.innerText = "Format email salah. Gunakan tanda '@' dan domain (contoh: nama@gmail.com).";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            // 3. Validasi Password
+            if (currentMode !== 'reset') {
+                if (!pass) {
+                    err.innerText = "Password tidak boleh kosong.";
+                    err.classList.remove('hidden');
+                    return;
+                }
+                if (pass.length < 6) {
+                    err.innerText = "Password terlalu pendek. Minimal harus 6 karakter.";
+                    err.classList.remove('hidden');
+                    return;
+                }
+            }
             
             btn.disabled = true;
             btn.innerText = "Memproses...";
-            err.classList.add('hidden');
-            success.classList.add('hidden');
 
             try {
                 if (currentMode === 'reset') {
@@ -150,8 +176,18 @@
                     success.innerText = "Email reset password telah dikirim! Cek inbox atau folder spam Anda.";
                     success.classList.remove('hidden');
                 } else if (currentMode === 'login') {
-                    await auth.signInWithEmailAndPassword(email, pass);
-                    window.location.href = 'dashboard.html';
+                    try {
+                        await auth.signInWithEmailAndPassword(email, pass);
+                        window.location.href = 'dashboard.html';
+                    } catch (loginErr) {
+                        // Logika deteksi belum daftar
+                        if (loginErr.code === 'auth/user-not-found' || loginErr.code === 'auth/invalid-credential') {
+                            err.innerHTML = "Email belum terdaftar. <button onclick='switchTab(\"daftar\")' class='underline font-bold hover:text-red-700 transition-colors'>Daftar di sini</button>";
+                            err.classList.remove('hidden');
+                        } else {
+                            throw loginErr;
+                        }
+                    }
                 } else {
                     if(!nama) throw new Error("Nama wajib diisi.");
                     const res = await auth.createUserWithEmailAndPassword(email, pass);
@@ -176,4 +212,3 @@
     </script>
 </body>
 </html>
-
