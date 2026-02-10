@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Kartu - ShareMaaf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;600&family=Cinzel:wght@400;700&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { sage: { 900: '#1A2F2F', 800: '#2F4F4F', 100: '#E8EFE8', 50: '#F4F7F5' }, gold: { 400: '#D4AF37', 500: '#C5A028' }, krem: '#F9F7F2' },
+                    fontFamily: { serif: ['Playfair Display', 'serif'], sans: ['Plus Jakarta Sans', 'sans-serif'], arab: ['Amiri', 'serif'], mewah: ['Cinzel', 'serif'], lucu: ['Dancing Script', 'cursive'] }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        html, body { margin: 0; padding: 5rem 1rem; background-color: #F9F7F2; overflow-x: hidden; scroll-behavior: smooth; }
+        .page-section { min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3rem 1.5rem; text-align: center; position: relative; z-index: 1; }
+        .text-container { position: relative; z-index: 10; max-width: 800px; width: 100%; }
+        
+        /* --- ORNAMEN --- */
+        .ornament-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+        
+        /* TEMA ISLAMI (Geometric) */
+        .islami-border { position: absolute; inset: 20px; border: 1px solid #D4AF37; opacity: 0.5; }
+        .islami-border::before { content: ''; position: absolute; inset: 4px; border: 1px solid #D4AF37; opacity: 0.3; }
+        .islami-corner { position: absolute; width: 60px; height: 60px; fill: none; stroke: #D4AF37; stroke-width: 1.5; }
+        .is-tl { top: 15px; left: 15px; }
+        .is-tr { top: 15px; right: 15px; transform: scaleX(-1); }
+        .is-bl { bottom: 15px; left: 15px; transform: scaleY(-1); }
+        .is-br { bottom: 15px; right: 15px; transform: scale(-1); }
+
+        .photo-frame { width: 140px; height: 140px; margin: 0 auto 20px auto; border-radius: 50%; border: 3px solid #D4AF37; overflow: hidden; display: none; }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .spin-slow { animation: spin 8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased text-gray-800 bg-krem transition-colors duration-500">
+
+    <div class="fixed top-0 left-0 w-full bg-sage-900 text-white z-[200] px-4 py-3 flex justify-between items-center shadow-lg">
+        <div class="text-xs md:text-sm font-medium">
+            <span class="opacity-70">Mode Preview:</span> <span class="text-gold-400 font-bold">Tema Sage Islami</span>
+        </div>
+        <a href="index.html" class="bg-gold-500 hover:bg-gold-400 text-sage-900 text-xs font-bold px-4 py-2 rounded-full transition shadow-md">
+            Buat Seperti Ini
+        </a>
+    </div>
+
+    <div id="loader" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="w-10 h-10 border-4 border-gray-300 border-t-yellow-500 rounded-full animate-spin mb-4"></div>
+        <p class="font-serif italic text-sm">Memuat Preview...</p>
+    </div>
+
+    <div id="cover" class="fixed inset-0 z-[90] flex flex-col items-center justify-center text-white transition-transform duration-1000 p-6 text-center bg-sage-900">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        
+        <div class="relative z-10 space-y-8">
+            <p id="coverLabel" class="text-xs font-bold tracking-[0.3em] uppercase text-gold-500">KARTU UCAPAN</p>
+            <div class="text-5xl animate-pulse">🌙</div>
+            <div class="space-y-2">
+                <p class="text-xs text-gray-300 mb-1">Kepada Yth:</p>
+                <h2 id="coverPenerima" class="font-serif text-3xl font-bold text-white leading-tight">Sahabat Tersayang</h2>
+            </div>
+            <button onclick="bukaUndangan()" id="btnBuka" class="mt-8 bg-gold-400 text-sage-900 px-8 py-3 rounded-full font-bold text-sm shadow-lg hover:scale-105 transition">Buka Kartu</button>
+        </div>
+    </div>
+
+    <div id="controls" class="fixed top-20 right-4 z-50 flex gap-2 hidden opacity-0 transition-opacity duration-1000">
+        <button onclick="toggleMusic()" id="btnMusic" class="w-10 h-10 bg-sage-900 rounded-full shadow flex items-center justify-center text-white spin-slow">♪</button>
+    </div>
+    <audio id="bgMusic" loop><source src="https://cdn.pixabay.com/audio/2021/09/06/audio_36224360a8.mp3" type="audio/mpeg"></audio>
+
+    <div id="mainContent">
+
+        <section class="page-section" id="sec1">
+            <div id="orn-p1" class="ornament-layer"></div>
+            <div class="text-container space-y-8">
+                <p class="text-xs font-bold tracking-[0.3em] uppercase opacity-60">Assalamualaikum</p>
+                <h1 id="p1-title" class="text-4xl md:text-6xl leading-tight font-bold font-serif">Ramadan <br> Segera Hadir.</h1>
+                <p id="p1-desc" class="text-base opacity-80 leading-relaxed px-2">Saatnya menenangkan hati dan membersihkan diri.</p>
+                <div class="pt-6">
+                    <p class="text-[10px] uppercase tracking-widest opacity-50 mb-2">Pesan Tulus Dari:</p>
+                    <div id="boxPengirim" class="inline-block border-y border-yellow-500/50 py-3 px-8 bg-white/50 rounded-lg backdrop-blur-sm">
+                        <h2 id="dispPengirim" class="text-2xl font-bold font-serif">Keluarga Pratama</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute bottom-5 animate-bounce opacity-50 text-[10px] tracking-widest">SCROLL ↓</div>
+        </section>
+
+        <section class="page-section text-white bg-sage-900" id="sec2">
+            <div id="orn-p2" class="ornament-layer"></div>
+            <div class="text-container space-y-10">
+                <div>
+                    <p class="text-[10px] font-bold tracking-[0.2em] uppercase text-gold-400 mb-2">Kepada Saudaraku</p>
+                    <h2 id="dispPenerima" class="text-3xl md:text-4xl text-white font-medium leading-tight font-serif">Sahabat Tersayang</h2>
+                </div>
+                <div class="space-y-4 px-2">
+                    <div class="text-4xl text-gold-400 opacity-60 font-serif leading-none">“</div>
+                    <p id="p2-maaf-default" class="text-xl md:text-2xl leading-relaxed italic opacity-90 font-light">
+                        "Bila selama ini tutur kata atau sikap saya pernah menyisakan luka, dengan tulus saya memohon maaf yang sebesar-besarnya."
+                    </p>
+                </div>
+                
+                <div id="boxPesanPersonal" class="bg-white/5 p-6 rounded-2xl border border-white/10 mx-2 backdrop-blur-md">
+                    <p class="text-[10px] uppercase text-gold-400 mb-2 tracking-widest">Pesan Tambahan:</p>
+                    <p id="p2-pesan-personal" class="text-sm text-gray-200 italic font-sans leading-relaxed">
+                        "Semoga Ramadan tahun ini membawa keberkahan melimpah untukmu dan keluarga. Mari kita mulai dengan lembaran baru yang bersih ya!"
+                    </p>
+                </div>
+
+                <div class="pt-6 border-t border-white/10">
+                    <p class="font-arab text-xl text-gold-400 mb-2">فَاعْفُ عَنْهُمْ وَاصْفَحْ</p>
+                    <p class="text-[10px] opacity-60 italic">"Maka maafkanlah mereka..." (QS. Al-Maidah: 13)</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-section" id="sec3">
+            <div id="orn-p3" class="ornament-layer"></div>
+            <div class="text-container space-y-8">
+                <div id="boxFoto" class="photo-frame" style="display: block;">
+                    <img id="imgFoto" src="https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Foto Keluarga">
+                </div>
+                
+                <h3 class="text-2xl font-bold font-serif">Harapan & Doa</h3>
+                <p id="p3-harapan" class="text-lg opacity-80 leading-loose font-light px-2">
+                    Semoga kita melangkah ke Ramadan dengan hati yang lapang, saling memaafkan, dan terus merawat silaturahmi.
+                </p>
+                <div id="boxAyat" class="mt-8 pt-8 border-t border-gray-300/50">
+                    <p class="font-arab text-2xl opacity-90 mb-2">وَلْيَعْفُوا وَلْيَصْفَحُوا</p>
+                    <p class="text-xs opacity-60 italic">"Dan hendaklah mereka memaafkan..." (QS. An-Nur: 22)</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pageInteraction" class="page-section">
+            <div id="orn-p4" class="ornament-layer"></div>
+            
+            <div id="cardBukber" class="w-full max-w-[90%] md:max-w-md bg-white border border-gray-100 rounded-[2rem] shadow-xl overflow-hidden relative z-10">
+                <div class="bg-sage-900 p-6 text-white text-center">
+                    <h2 class="text-xl font-bold">Undangan Bukber</h2>
+                    <p class="text-[10px] mt-1 opacity-80 uppercase tracking-widest">Silaturahmi Ramadan</p>
+                </div>
+                <div class="p-6 space-y-5 text-center">
+                    <p class="text-sm opacity-80 leading-relaxed font-light">
+                        Dengan penuh rasa syukur, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam momen silaturahmi.
+                    </p>
+                    <div class="bg-gray-50 p-4 rounded-xl text-left space-y-3 border border-gray-100">
+                        <div><p class="text-[10px] uppercase font-bold opacity-50">Waktu</p><p class="text-sm font-bold">20 Maret 2026 • 17:00 WIB</p></div>
+                        <div class="border-t border-gray-200 pt-2"><p class="text-[10px] uppercase font-bold opacity-50">Lokasi</p><p class="text-sm font-bold">Rumah Kami, Jl. Kenangan No. 10</p></div>
+                    </div>
+                    <div id="boxRSVP" class="space-y-3 pt-2">
+                        <input type="text" id="guestNameBukber" placeholder="Nama Anda..." class="w-full text-center p-3 border-b-2 focus:border-yellow-400 outline-none text-sm bg-transparent transition">
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="simulasiRSVP()" class="py-3 bg-sage-900 text-white rounded-xl font-bold text-xs shadow-md hover:bg-sage-800">HADIR</button>
+                            <button onclick="simulasiRSVP()" class="py-3 bg-gray-100 text-gray-500 rounded-xl font-bold text-xs hover:bg-gray-200">MAAF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="msgSuccess" class="hidden p-6 bg-white rounded-2xl shadow-xl text-center max-w-xs relative z-10">
+                <div class="text-4xl mb-4">✅</div>
+                <h3 class="font-bold mb-2">Terkirim!</h3>
+                <p class="text-xs opacity-60">Ini hanya simulasi preview. <br>Di versi asli, pesan Anda akan tersimpan.</p>
+                <button onclick="location.reload()" class="mt-4 text-xs text-blue-500 underline">Ulangi Preview</button>
+            </div>
+
+            <footer class="absolute bottom-4 w-full text-center text-[10px] opacity-40">ShareMaaf Preview &copy; 2026</footer>
+        </section>
+
+    </div>
+
+    <script>
+        // Render Ornamen CSS Murni (Sage Islami)
+        const decorLayers = [document.getElementById('orn-p1'), document.getElementById('orn-p2'), document.getElementById('orn-p3'), document.getElementById('orn-p4')];
+        const islamiDecor = `
+            <div class="islami-border"></div>
+            <svg class="islami-corner is-tl"><path d="M0 60 V15 Q15 15 30 0 H60" /></svg>
+            <svg class="islami-corner is-tr"><path d="M0 60 V15 Q15 15 30 0 H60" /></svg>
+            <svg class="islami-corner is-bl"><path d="M0 60 V15 Q15 15 30 0 H60" /></svg>
+            <svg class="islami-corner is-br"><path d="M0 60 V15 Q15 15 30 0 H60" /></svg>
+        `;
+        decorLayers.forEach(l => l.innerHTML = islamiDecor);
+
+        // Hilangkan loader
+        window.addEventListener('load', () => {
+            setTimeout(() => { document.getElementById('loader').classList.add('opacity-0', 'pointer-events-none'); }, 800);
+        });
+
+        function bukaUndangan() {
+            const cover = document.getElementById('cover');
+            const controls = document.getElementById('controls');
+            const audio = document.getElementById('bgMusic');
+            
+            cover.style.transform = 'translateY(-100%)';
+            controls.classList.remove('hidden');
+            setTimeout(() => controls.classList.remove('opacity-0'), 500);
+            
+            // Auto play music (browser policy might block this without user interaction, 
+            // but since user clicked button, it usually works)
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log("Audio perlu interaksi manual"));
+        }
+
+        function toggleMusic() { 
+            const audio = document.getElementById('bgMusic'); 
+            const btn = document.getElementById('btnMusic'); 
+            if (audio.paused) { 
+                audio.play(); 
+                btn.classList.add('spin-slow'); 
+                btn.style.opacity = '1'; 
+            } else { 
+                audio.pause(); 
+                btn.classList.remove('spin-slow'); 
+                btn.style.opacity = '0.5'; 
+            } 
+        }
+
+        function simulasiRSVP() {
+            const nama = document.getElementById('guestNameBukber').value;
+            if(!nama) return alert("Silakan isi nama dulu untuk mencoba fitur ini.");
+            
+            // Efek Loading palsu
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "...";
+            
+            setTimeout(() => {
+                document.getElementById('cardBukber').classList.add('hidden');
+                document.getElementById('msgSuccess').classList.remove('hidden');
+            }, 800);
+        }
+    </script>
+</body>
+</html>
+
