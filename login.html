@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - ShareMaaf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sage: { 50: '#F4F7F5', 100: '#E8EFE8', 500: '#8DA399', 800: '#2F4F4F', 900: '#1A2F2F' },
+                        gold: { 400: '#D4AF37', 500: '#C5A028' },
+                        krem: '#F9F7F2'
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white text-sage-900 h-screen flex overflow-hidden">
+
+    <!-- BAGIAN KIRI (GAMBAR HIASAN) -->
+    <div class="hidden md:flex md:w-1/2 bg-sage-900 relative justify-center items-center p-12 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
+        <div class="relative z-10 text-center space-y-6 max-w-md animate-pulse">
+            <div class="w-16 h-16 bg-sage-800 rounded-2xl mx-auto flex items-center justify-center text-gold-400 text-3xl shadow-lg mb-6">🌙</div>
+            <h2 class="font-serif text-4xl text-white font-bold leading-tight">"Maafkanlah, niscaya hati menjadi tenang."</h2>
+            <p class="text-sage-300 font-light text-lg">Mulai langkah kecil menuju Ramadan dengan membersihkan hati bersama ShareMaaf.</p>
+        </div>
+    </div>
+
+    <!-- BAGIAN KANAN (FORMULIR) -->
+    <div class="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-20 bg-krem relative">
+        <a href="index.html" class="absolute top-8 left-8 text-sage-500 hover:text-sage-900 flex items-center gap-2 text-sm font-semibold transition-colors">
+            ← Kembali ke Beranda
+        </a>
+
+        <div class="max-w-sm mx-auto w-full space-y-8 mt-10 md:mt-0">
+            <div class="text-center md:text-left">
+                <h1 class="font-serif text-3xl font-bold text-sage-900">Selamat Datang</h1>
+                <p class="text-gray-500 mt-2">Masuk untuk mengelola ucapan Anda.</p>
+            </div>
+
+            <!-- TABS (PILIHAN MENU) -->
+            <div class="flex border-b border-gray-200">
+                <button onclick="switchMode('login')" id="tabLogin" class="flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900 transition-colors">Masuk</button>
+                <button onclick="switchMode('daftar')" id="tabDaftar" class="flex-1 pb-3 border-b-2 border-transparent text-gray-400 hover:text-sage-600 transition-colors">Daftar Baru</button>
+            </div>
+
+            <!-- INPUT FORM -->
+            <div class="space-y-5">
+                <div id="fieldNama" class="hidden">
+                    <label class="text-[10px] font-bold text-sage-500 uppercase tracking-widest ml-1">Nama Lengkap</label>
+                    <input type="text" id="nama" class="w-full p-4 mt-1 rounded-2xl border border-gray-200 bg-white text-sm focus:ring-2 focus:ring-sage-500 outline-none transition" placeholder="Contoh: Acep Saepudin">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-sage-500 uppercase tracking-widest ml-1">Alamat Email</label>
+                    <input type="email" id="email" class="w-full p-4 mt-1 rounded-2xl border border-gray-200 bg-white text-sm focus:ring-2 focus:ring-sage-500 outline-none transition" placeholder="email@contoh.com">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-sage-500 uppercase tracking-widest ml-1">Password</label>
+                    <input type="password" id="password" class="w-full p-4 mt-1 rounded-2xl border border-gray-200 bg-white text-sm focus:ring-2 focus:ring-sage-500 outline-none transition" placeholder="Minimal 6 karakter">
+                </div>
+
+                <button onclick="handleAuth()" id="btnAuth" class="w-full py-4 bg-sage-900 text-white rounded-2xl font-bold shadow-lg hover:bg-sage-800 transition-all transform active:scale-95">
+                    MASUK SEKARANG
+                </button>
+            </div>
+            
+            <p id="pesanError" class="text-center text-xs text-red-500 hidden"></p>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // --- TEMPAT CONFIG (PASTE SAMA PERSIS DENGAN INDEX.HTML) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCKRq7PIArOYmQfJvWi3dD7TRCCzgvUH4s", // PASTIKAN INI SAMA
+            authDomain: "sharemaaf.firebaseapp.com",
+            projectId: "sharemaaf",
+            storageBucket: "sharemaaf.firebasestorage.app",
+            messagingSenderId: "797790329328",
+            appId: "1:797790329328:web:17b3704be32155aace6535"
+        };
+        // -----------------------------------------------------------
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let mode = 'login';
+
+        // Cek jika user sudah login, langsung lempar ke dashboard
+        auth.onAuthStateChanged(user => {
+            if (user) window.location.href = 'dashboard.html';
+        });
+
+        function switchMode(selectedMode) {
+            mode = selectedMode;
+            const tabLogin = document.getElementById('tabLogin');
+            const tabDaftar = document.getElementById('tabDaftar');
+            const fieldNama = document.getElementById('fieldNama');
+            const btn = document.getElementById('btnAuth');
+
+            if (mode === 'login') {
+                tabLogin.className = "flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900";
+                tabDaftar.className = "flex-1 pb-3 border-b-2 border-transparent text-gray-400";
+                fieldNama.style.display = 'none';
+                btn.innerText = "MASUK SEKARANG";
+            } else {
+                tabLogin.className = "flex-1 pb-3 border-b-2 border-transparent text-gray-400";
+                tabDaftar.className = "flex-1 pb-3 border-b-2 border-sage-900 font-bold text-sage-900";
+                fieldNama.style.display = 'block';
+                btn.innerText = "DAFTAR AKUN BARU";
+            }
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const nama = document.getElementById('nama').value;
+            const btn = document.getElementById('btnAuth');
+            const errBox = document.getElementById('pesanError');
+
+            if (!email || !pass) {
+                alert("Mohon isi email dan password.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Memproses...";
+            errBox.classList.add('hidden');
+
+            if (mode === 'login') {
+                // PROSES LOGIN
+                auth.signInWithEmailAndPassword(email, pass)
+                    .then((res) => {
+                        // Simpan nama sederhana di local storage untuk akses cepat
+                        const displayName = res.user.displayName || email.split('@')[0];
+                        localStorage.setItem('user_salingmaaf', displayName);
+                        window.location.href = 'dashboard.html';
+                    })
+                    .catch(error => {
+                        btn.disabled = false;
+                        btn.innerText = "MASUK SEKARANG";
+                        errBox.innerText = "Gagal Masuk: " + error.message;
+                        errBox.classList.remove('hidden');
+                    });
+            } else {
+                // PROSES DAFTAR
+                if (!nama) {
+                    btn.disabled = false;
+                    alert("Mohon isi Nama Lengkap untuk mendaftar.");
+                    return;
+                }
+
+                auth.createUserWithEmailAndPassword(email, pass)
+                    .then((res) => {
+                        // Update profil user dengan nama asli
+                        res.user.updateProfile({ displayName: nama }).then(() => {
+                            // Simpan data user ke database Firestore (agar tercatat)
+                            db.collection('users').doc(res.user.uid).set({
+                                nama: nama,
+                                email: email,
+                                joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            
+                            localStorage.setItem('user_salingmaaf', nama);
+                            alert("Pendaftaran Berhasil! Selamat datang.");
+                            window.location.href = 'dashboard.html';
+                        });
+                    })
+                    .catch(error => {
+                        btn.disabled = false;
+                        btn.innerText = "DAFTAR AKUN BARU";
+                        errBox.innerText = "Gagal Daftar: " + error.message;
+                        errBox.classList.remove('hidden');
+                    });
+            }
+        }
+    </script>
+</body>
+</html>
+
+
