@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ShareMaaf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F9F7F2; }
+        
+        /* Template Active State */
+        .active-template { 
+            border-color: #D4AF37; 
+            background-color: #FDFCF8; 
+            box-shadow: 0 0 0 2px #D4AF37; 
+            transform: scale(1.02); 
+        }
+        
+        /* Warna Active State */
+        .color-btn {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .color-btn.selected::after {
+            content: '';
+            position: absolute;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border: 2px solid #D4AF37;
+            border-radius: 9999px;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        sage: { 50: '#F4F7F5', 100: '#E8EFE8', 500: '#8DA399', 800: '#2F4F4F', 900: '#1A2F2F' }, 
+                        gold: { 400: '#D4AF37', 500: '#C5A028' } 
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="pb-32 text-sage-900">
+
+    <!-- NAVIGASI UTAMA -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-sage-100 sticky top-0 z-40">
+        <div class="max-w-2xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="w-8 h-8 bg-sage-900 rounded-lg flex items-center justify-center text-gold-400 text-sm shadow-md">🌙</div>
+                <span class="font-bold text-lg text-sage-900">ShareMaaf</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="userBadge" class="text-xs font-semibold bg-sage-50 px-3 py-1 rounded-full text-sage-600 uppercase tracking-tighter">Memuat...</span>
+                <button onclick="handleLogout()" class="text-[10px] font-bold text-red-500 border border-red-100 px-3 py-1 rounded-full bg-white shadow-sm hover:bg-red-50 transition">LOGOUT</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto px-6 mt-8 space-y-10">
+
+        <!-- BUILDER / FORM PEMBUATAN -->
+        <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-sage-50 space-y-8">
+            <div class="border-b border-sage-50 pb-4">
+                <h2 class="text-xl font-bold text-sage-900">Buat Halaman Baru</h2>
+                <p class="text-sm text-gray-500">Sesuaikan desain dan pesan tulus Anda.</p>
+            </div>
+
+            <!-- A. Template -->
+            <div>
+                <label class="block text-xs font-bold text-sage-500 uppercase mb-3 tracking-widest">1. Pilih Desain</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <div onclick="setTemplate('islami', this)" class="cursor-pointer border border-sage-200 rounded-2xl p-4 text-center active-template transition" id="tpl-def">
+                        <div class="text-2xl mb-1">🕌</div>
+                        <div class="text-[10px] font-bold">Islami</div>
+                    </div>
+                    <div onclick="setTemplate('elegan', this)" class="cursor-pointer border border-sage-200 rounded-2xl p-4 text-center transition">
+                        <div class="text-2xl mb-1">💎</div>
+                        <div class="text-[10px] font-bold">Elegan</div>
+                    </div>
+                    <div onclick="setTemplate('hangat', this)" class="cursor-pointer border border-sage-200 rounded-2xl p-4 text-center transition">
+                        <div class="text-2xl mb-1">☕</div>
+                        <div class="text-[10px] font-bold">Hangat</div>
+                    </div>
+                </div>
+                <input type="hidden" id="template" value="islami">
+            </div>
+
+            <!-- B. Info Utama -->
+            <div class="space-y-4">
+                <label class="block text-xs font-bold text-sage-500 uppercase tracking-widest">2. Informasi Pengirim</label>
+                <input type="text" id="pengirim" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm focus:ring-2 focus:ring-sage-900 outline-none transition" placeholder="Nama Anda (Wajib)">
+                
+                <div class="bg-sage-50 p-6 rounded-[2rem] space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-sage-500 uppercase mb-1 tracking-tighter">Nama Penerima (Opsional)</label>
+                        <input type="text" id="penerima" oninput="cekPenerima()" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-white text-sm focus:ring-2 focus:ring-sage-900 outline-none" placeholder="Kosongkan untuk Link Umum">
+                        <p class="text-[10px] text-gray-400 mt-2 italic px-1">*Jika kosong, teks akan menjadi "Saudara/Saudariku".</p>
+                    </div>
+
+                    <div id="boxHubungan" class="hidden">
+                        <label class="block text-xs font-bold text-sage-500 uppercase mb-1 tracking-tighter">Hubungan</label>
+                        <select id="hubungan" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-white text-sm outline-none cursor-pointer">
+                            <option value="Keluarga">Keluarga</option>
+                            <option value="Teman">Teman</option>
+                            <option value="Rekan Kerja">Rekan Kerja</option>
+                            <option value="Tetangga">Tetangga</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- C. Konten & Gaya -->
+            <div class="space-y-4">
+                <label class="block text-xs font-bold text-sage-500 uppercase tracking-widest">3. Pesan & Gaya</label>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Gaya Bahasa</label>
+                        <select id="gaya" class="w-full px-4 py-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm outline-none cursor-pointer">
+                            <option value="formal">Formal (Sopan)</option>
+                            <option value="santai">Santai / Akrab</option>
+                            <option value="puitis">Puitis</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-3">Warna Tema</label>
+                        <div class="flex gap-4 items-center">
+                            <div onclick="setWarna('sage', this)" class="color-btn selected w-10 h-10 rounded-full bg-sage-900 cursor-pointer shadow-md" title="Hijau Sage"></div>
+                            <div onclick="setWarna('gold', this)" class="color-btn w-10 h-10 rounded-full bg-yellow-600 cursor-pointer shadow-md" title="Gold Mewah"></div>
+                            <div onclick="setWarna('pink', this)" class="color-btn w-10 h-10 rounded-full bg-rose-400 cursor-pointer shadow-md" title="Pink Pastel"></div>
+                        </div>
+                        <input type="hidden" id="temaWarna" value="sage">
+                    </div>
+                </div>
+
+                <textarea id="pesan" rows="3" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm focus:ring-2 focus:ring-sage-900 outline-none" placeholder="Tulis pesan tambahan personal..."></textarea>
+                
+                <div class="flex items-center gap-4">
+                    <label class="cursor-pointer bg-white border border-gray-200 px-5 py-3 rounded-2xl text-xs font-bold text-sage-800 hover:bg-gray-50 flex items-center gap-2 transition shadow-sm">
+                        📷 Upload Foto <input type="file" id="fotoUser" accept="image/*" class="hidden" onchange="previewFoto()">
+                    </label>
+                    <span id="fotoStatus" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Maks. 1MB</span>
+                </div>
+            </div>
+
+            <!-- D. Fitur Tambahan -->
+            <div class="space-y-3 pt-2">
+                <div class="border rounded-[2rem] p-5 hover:border-sage-300 transition bg-white">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <span class="text-sm font-bold text-sage-900">Undangan Silaturahmi?</span>
+                            <p class="text-[10px] text-gray-400">Aktifkan untuk menyertakan info lokasi & RSVP.</p>
+                        </div>
+                        <input type="checkbox" id="isBukber" onchange="toggleBukber()" class="accent-sage-900 w-6 h-6 cursor-pointer">
+                    </div>
+                    <div id="formBukber" class="hidden space-y-3 mt-4 pt-4 border-t border-dashed border-gray-200">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="date" id="tglBukber" class="w-full p-4 border border-gray-100 rounded-xl text-xs bg-gray-50 outline-none">
+                            <input type="time" id="waktuBukber" class="w-full p-4 border border-gray-100 rounded-xl text-xs bg-gray-50 outline-none">
+                        </div>
+                        <input type="text" id="lokasiBukber" class="w-full p-4 border border-gray-100 rounded-xl text-xs bg-gray-50 outline-none" placeholder="Lokasi (Contoh: Rumah Saya / Nama Resto)">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="generate()" id="btnGen" class="w-full bg-sage-900 text-white font-bold py-5 rounded-[2.5rem] shadow-xl hover:bg-sage-800 active:scale-95 transition tracking-widest text-xs">
+                BUAT UCAPAN/UNDANGANMU
+            </button>
+        </div>
+        <!-- Tombol Support -->
+        <div class="bg-gradient-to-br from-gold-400/10 to-sage-50 border border-gold-400/20 p-6 rounded-[2.5rem] my-8 relative overflow-hidden group">
+    <div class="absolute -right-4 -bottom-4 text-6xl opacity-10 group-hover:rotate-12 transition-transform">🎁</div>
+    
+    <div class="relative z-10 flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+        <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl border border-gold-400/30">
+            🤝
+        </div>
+        <div class="flex-1">
+            <h4 class="text-sm font-bold text-sage-900"><b>Dukung ShareMaaf tebar kebaikan!</b></h4>
+            <p class="text-[10px] text-gray-500 leading-relaxed mt-1">
+                70% donasi disalurkan ke anak yatim & sosial, 30% untuk biaya server agar web tetap gratis.
+            </p>
+        </div>
+        <a href="https://trakteer.id/share_maaf" target="_blank" class="bg-white hover:bg-gold-400 hover:text-white text-gold-500 border border-gold-400/50 px-6 py-3 rounded-full text-[10px] font-bold tracking-widest transition-all shadow-sm active:scale-95">
+            TRAKTIR KAMI
+        </a>
+        </div>
+    </div>
+
+
+        <!-- RIWAYAT UNDANGAN -->
+        <div class="space-y-4 px-2">
+            <h3 class="text-lg font-bold text-sage-900 flex items-center gap-2">
+                📂 Daftar Kartu Saya 
+                <span class="text-[10px] font-bold text-sage-600 bg-sage-100 px-3 py-1 rounded-full" id="countUndangan">0</span>
+            </h3>
+            <div id="listUndangan" class="grid gap-3 pb-20">
+                <div class="text-center py-10 text-gray-400 text-xs italic">Memuat data dari cloud...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL DATA RSVP -->
+    <div id="modalRSVP" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center p-4">
+        <div class="bg-white w-full md:max-w-md h-[80vh] md:h-auto rounded-t-[3rem] md:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-8 border-b flex justify-between items-center bg-gray-50">
+                <div>
+                    <h4 class="font-bold text-lg text-sage-900" id="modalHeaderTitle">Data Masuk</h4>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest" id="modalTitle">...</p>
+                </div>
+                <button onclick="tutupModal()" class="w-10 h-10 bg-white rounded-full text-gray-400 shadow-sm flex items-center justify-center hover:text-red-500 transition">✕</button>
+            </div>
+            <div class="px-8 pt-6 pb-2 bg-white border-b border-gray-50 flex text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                <div class="w-1/3">Nama Pengirim</div>
+                <div class="w-2/3 text-right" id="colHeader2">Pesan / Status</div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 bg-gray-50 space-y-3" id="listTamu"></div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDK COMPAT -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // CONFIG FIREBASE SHAREMAAF ASLI
+        const firebaseConfig = {
+            apiKey: "AIzaSyCKRq7PIArOYmQfJvWi3dD7TRCCZgvUH4s",
+            authDomain: "sharemaaf.firebaseapp.com",
+            projectId: "sharemaaf",
+            storageBucket: "sharemaaf.firebasestorage.app",
+            messagingSenderId: "797790329328",
+            appId: "1:797790329328:web:17b3704be32155aace6535"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentFotoBase64 = "";
+
+        // PROTEKSI DASHBOARD & CEK USER
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Tampilkan nama di badge
+                document.getElementById('userBadge').innerText = user.displayName || user.email.split('@')[0];
+                // Muat data khusus milik user ini
+                loadData(user.uid);
+            } else {
+                // Jika tidak login, lempar ke login
+                window.location.href = 'login.html';
+            }
+        });
+
+        // UI LOGIC FUNCTIONS
+        function setTemplate(t, el) {
+            document.querySelectorAll('.active-template').forEach(e => e.classList.remove('active-template'));
+            el.classList.add('active-template');
+            document.getElementById('template').value = t;
+        }
+
+        function setWarna(w, el) {
+            document.querySelectorAll('.color-btn').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('temaWarna').value = w;
+        }
+
+        function cekPenerima() {
+            const val = document.getElementById('penerima').value;
+            const hub = document.getElementById('boxHubungan');
+            val.length > 0 ? hub.classList.remove('hidden') : hub.classList.add('hidden');
+        }
+
+        function toggleBukber() {
+            const form = document.getElementById('formBukber');
+            document.getElementById('isBukber').checked ? form.classList.remove('hidden') : form.classList.add('hidden');
+        }
+
+        function previewFoto() {
+            const file = document.getElementById('fotoUser').files[0];
+            if(file) {
+                if(file.size > 1048576) return alert("Ukuran foto maksimal 1MB.");
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    currentFotoBase64 = reader.result;
+                    const status = document.getElementById('fotoStatus');
+                    status.innerText = "Foto Siap ✓";
+                    status.classList.add('text-green-600');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // FUNGSI UTAMA: SIMPAN KE CLOUD
+        async function generate() {
+            const user = auth.currentUser;
+            const btn = document.getElementById('btnGen');
+            const pengirim = document.getElementById('pengirim').value;
+
+            if(!pengirim) return alert("Mohon isi Nama Pengirim!");
+
+            btn.disabled = true; 
+            btn.innerText = "MENYIMPAN KE CLOUD...";
+
+            const data = {
+                uid: user.uid, // Penting: Menandai pemilik kartu ini
+                pengirim: pengirim,
+                penerima: document.getElementById('penerima').value || "",
+                hubungan: document.getElementById('hubungan').value,
+                gaya: document.getElementById('gaya').value,
+                warna: document.getElementById('temaWarna').value,
+                template: document.getElementById('template').value,
+                pesan: document.getElementById('pesan').value,
+                foto: currentFotoBase64,
+                isBukber: document.getElementById('isBukber').checked,
+                tglBukber: document.getElementById('tglBukber').value,
+                waktuBukber: document.getElementById('waktuBukber').value,
+                lokasiBukber: document.getElementById('lokasiBukber').value,
+                isCountdown: true, 
+                isAyat: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                const doc = await db.collection("undangan").add(data);
+                window.location.href = `undangan.html?id=${doc.id}`;
+            } catch (error) {
+                alert("Gagal menyimpan: " + error.message);
+                btn.disabled = false;
+                btn.innerText = "GENERATE & SIMPAN CLOUD";
+            }
+        }
+
+        // LOAD DATA KHUSUS MILIK USER (REALTIME)
+        function loadData(uid) {
+            db.collection("undangan").where("uid", "==", uid).onSnapshot(snap => {
+                const list = document.getElementById('listUndangan');
+                list.innerHTML = "";
+                
+                if(snap.empty) {
+                    list.innerHTML = `<div class="text-center py-10 opacity-30"><p class="text-3xl mb-2">📭</p><p class="text-xs">Belum ada kartu yang dibuat.</p></div>`;
+                    document.getElementById('countUndangan').innerText = "0";
+                    return;
+                }
+
+                let items = [];
+                snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+                // Sort manual terbaru di atas
+                items.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                items.forEach(d => {
+                    const labelPenerima = d.penerima ? d.penerima : "Link Umum (Broadcast)";
+                    const stylePenerima = d.penerima ? "text-sage-900 font-bold" : "text-gold-500 font-bold italic";
+                    const typeLabel = d.isBukber ? "📅 Undangan Bukber" : "💌 Kartu Ucapan";
+                    
+                    list.innerHTML += `
+                    <div class="bg-white p-5 rounded-[2rem] border border-sage-50 shadow-sm flex justify-between items-center hover:shadow-md transition group">
+                        <div class="flex-1 cursor-pointer" onclick="bukaModal('${d.id}', '${labelPenerima}', ${d.isBukber})">
+                            <p class="text-[9px] uppercase text-gray-400 font-bold tracking-widest mb-1">${typeLabel}</p>
+                            <h3 class="${stylePenerima} text-sm">${labelPenerima}</h3>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="window.location.href='undangan.html?id=${d.id}'" class="w-10 h-10 bg-sage-50 rounded-2xl flex items-center justify-center text-sage-600 hover:bg-sage-100 transition" title="Lihat">👁️</button>
+                            <button onclick="hapus('${d.id}')" class="w-10 h-10 bg-red-50 rounded-2xl flex items-center justify-center text-red-300 hover:text-red-500 transition" title="Hapus">🗑️</button>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('countUndangan').innerText = items.length;
+            });
+        }
+
+        function hapus(id) {
+            if(confirm("Hapus kartu ini? Semua data ucapan masuk (RSVP) juga akan terhapus.")) {
+                db.collection("undangan").doc(id).delete();
+            }
+        }
+
+        function handleLogout() {
+            if(confirm("Keluar dari akun ShareMaaf?")) {
+                auth.signOut().then(() => {
+                    window.location.href = 'index.html';
+                });
+            }
+        }
+
+        // MANAJEMEN MODAL RSVP / DOA MASUK
+        function bukaModal(id, title, isBukber) {
+            document.getElementById('modalRSVP').classList.remove('hidden');
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalHeaderTitle').innerText = isBukber ? "Daftar Hadir (RSVP)" : "Ucapan & Doa Masuk";
+            
+            const col2 = document.getElementById('colHeader2');
+            col2.innerText = isBukber ? "STATUS" : "PESAN DOA";
+
+            const div = document.getElementById('listTamu');
+            div.innerHTML = '<p class="text-center text-xs text-gray-400 py-6">Memuat data...</p>';
+
+            db.collection("rsvp").where("invitationId", "==", id).onSnapshot(snap => {
+                div.innerHTML = "";
+                if(snap.empty) {
+                    div.innerHTML = `<p class="text-center text-xs text-gray-400 py-10 italic">Belum ada respons masuk.</p>`;
+                    return;
+                }
+
+                let rsvps = [];
+                snap.forEach(doc => rsvps.push({ id: doc.id, ...doc.data() }));
+                rsvps.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                
+                rsvps.forEach(g => {
+                    let statusColor = g.hadir ? 'text-green-700 bg-green-100' : 'text-red-600 bg-red-100';
+                    let contentRight = isBukber ? 
+                        `<span class="${statusColor} px-3 py-1 rounded-lg text-[10px] font-bold">${g.hadir ? 'HADIR' : 'MAAF'}</span>` : 
+                        `<p class="text-[11px] text-gray-600 italic text-right leading-relaxed line-clamp-3">"${g.message || '-'}"</p>`;
+
+                    div.innerHTML += `
+                    <div class="flex justify-between items-center p-4 bg-white rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <div class="w-1/3 pr-2">
+                            <p class="text-xs font-bold text-sage-900 truncate">${g.nama}</p>
+                            <p class="text-[9px] text-gray-400 mt-0.5">${g.timestamp ? new Date(g.timestamp.seconds * 1000).toLocaleDateString('id-ID') : 'Baru saja'}</p>
+                        </div>
+                        <div class="w-2/3 flex justify-end items-center gap-3">
+                            ${contentRight}
+                            <button onclick="hapusRSVP('${g.id}')" class="text-gray-300 hover:text-red-400 transition ml-2">✕</button>
+                        </div>
+                    </div>`;
+                });
+            });
+        }
+
+        function tutupModal() {
+            document.getElementById('modalRSVP').classList.add('hidden');
+        }
+
+        function hapusRSVP(rid) {
+            if(confirm("Hapus data masuk ini?")) db.collection("rsvp").doc(rid).delete();
+        }
+    </script>
+</body>
+</html>
+
